@@ -3,7 +3,6 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Learning Diagnostic</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -19,6 +18,7 @@
 
         <!-- START SCREEN -->
         <section id="startScreen">
+
             <h2>What do you want to learn?</h2>
 
             <p>
@@ -34,16 +34,19 @@
             <button id="continueButton">
                 Continue
             </button>
+
         </section>
 
 
-        <!-- DIAGNOSTIC SCREEN -->
+        <!-- QUIZ SCREEN -->
         <section id="quizScreen" class="hidden">
 
-            <p id="unitName"></p>
+            <h3 id="unitName"></h3>
+
             <p id="difficulty"></p>
 
-            <h2 id="questionText"></h2>
+            <!-- Question text AND code box go inside here -->
+            <div id="questionText"></div>
 
             <div id="answerChoices"></div>
 
@@ -54,14 +57,13 @@
         </section>
 
 
-        <!-- FINAL RESULTS SCREEN -->
+        <!-- RESULTS SCREEN -->
         <section id="resultsScreen" class="hidden">
 
-            <h2>Your Mastery Results</h2>
+            <h2>Your Java Mastery</h2>
 
             <p>
-                Your diagnostic is complete. These results will be used
-                to create your personalized learning path.
+                These results will be used to personalize your learning path.
             </p>
 
             <div id="masteryResults"></div>
@@ -71,10 +73,10 @@
     </main>
 
 
-    <!-- Question bank -->
+    <!-- Question bank must load first -->
     <script src="questions.js"></script>
 
-    <!-- Diagnostic functionality -->
+    <!-- Diagnostic logic loads second -->
     <script src="script.js"></script>
 
 </body>
