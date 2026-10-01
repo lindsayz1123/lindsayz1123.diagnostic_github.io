@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Learning Diagnostic</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -16,7 +17,8 @@
 
     <main>
 
-        <section>
+        <!-- START SCREEN -->
+        <section id="startScreen">
             <h2>What do you want to learn?</h2>
 
             <p>
@@ -34,7 +36,40 @@
             </button>
         </section>
 
+
+        <!-- DIAGNOSTIC SCREEN -->
+        <section id="quizScreen" class="hidden">
+
+            <p id="unitName"></p>
+            <p id="difficulty"></p>
+
+            <h2 id="questionText"></h2>
+
+            <div id="answerChoices"></div>
+
+            <button id="submitButton">
+                Submit Answer
+            </button>
+
+        </section>
+
+
+        <!-- FINAL RESULTS SCREEN -->
+        <section id="resultsScreen" class="hidden">
+
+            <h2>Your Mastery Results</h2>
+
+            <p>
+                Your diagnostic is complete. These results will be used
+                to create your personalized learning path.
+            </p>
+
+            <div id="masteryResults"></div>
+
+        </section>
+
     </main>
+
 
     <!-- Question bank -->
     <script src="questions.js"></script>

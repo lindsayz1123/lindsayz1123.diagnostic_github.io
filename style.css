@@ -23,86 +23,70 @@ header p {
 /* Main diagnostic area */
 section {
     background-color: white;
-
     width: 500px;
     max-width: 80%;
-
     margin: 50px auto;
     padding: 40px;
-
     border-radius: 12px;
-
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Hide screens until JavaScript displays them */
+.hidden {
+    display: none;
 }
 
 /* Topic input */
 input {
     width: 70%;
-
     padding: 12px;
-
     font-size: 16px;
-
     border: 1px solid #ccc;
     border-radius: 6px;
 }
 
-/* Continue button */
+/* Buttons */
 button {
     padding: 12px 20px;
-
     font-size: 16px;
-
     border: none;
     border-radius: 6px;
-
     background-color: #2563eb;
     color: white;
-
     cursor: pointer;
 }
 
-/* Change button when mouse is over it */
 button:hover {
     background-color: #1d4ed8;
 }
 
-.answer-button {
-    display: block;
-    width: 100%;
-
-    margin: 10px 0;
-    padding: 12px;
-
-    background-color: #f1f5f9;
-    color: black;
-
-    border: 1px solid #ccc;
-    border-radius: 6px;
-
-    cursor: pointer;
+/* Question information */
+#unitName {
+    font-weight: bold;
+    color: #2563eb;
+    margin-bottom: 5px;
 }
 
-.answer-button:hover {
-    background-color: #e2e8f0;
+#difficulty {
+    color: #666;
+    margin-top: 0;
+    margin-bottom: 25px;
+}
+
+#questionText {
+    margin-bottom: 25px;
 }
 
 /* Answer choices */
-
 .answer-button {
     display: block;
-
     width: 100%;
-
     margin: 10px 0;
     padding: 12px;
-
     background-color: #f1f5f9;
     color: black;
-
     border: 1px solid #ccc;
     border-radius: 6px;
-
     cursor: pointer;
 }
 
@@ -110,12 +94,20 @@ button:hover {
     background-color: #e2e8f0;
 }
 
+/* Selected answer */
+.answer-button.selected {
+    background-color: #dbeafe;
+    border: 2px solid #2563eb;
+}
+
+/* Submit button */
+#submitButton {
+    margin-top: 20px;
+}
 
 /* Results */
-
 .result-box {
     text-align: left;
-
     margin: 25px 0;
 }
 
@@ -127,27 +119,18 @@ button:hover {
     margin-top: 0;
 }
 
-
 /* Empty mastery bar */
-
 .mastery-bar {
     width: 100%;
     height: 12px;
-
     background-color: #e5e7eb;
-
     border-radius: 6px;
-
     overflow: hidden;
 }
 
-
 /* Filled portion of mastery bar */
-
 .mastery-fill {
     height: 100%;
-
     background-color: #2563eb;
-
     border-radius: 6px;
 }
