@@ -1,1 +1,68 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f7fa;
+    margin: 0;
+    text-align: center;
+}
 
+/* Top of the page */
+header {
+    margin-top: 80px;
+}
+
+header h1 {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+header p {
+    color: #666;
+    font-size: 18px;
+}
+
+/* Main diagnostic area */
+section {
+    background-color: white;
+
+    width: 500px;
+    max-width: 80%;
+
+    margin: 50px auto;
+    padding: 40px;
+
+    border-radius: 12px;
+
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Topic input */
+input {
+    width: 70%;
+
+    padding: 12px;
+
+    font-size: 16px;
+
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+/* Continue button */
+button {
+    padding: 12px 20px;
+
+    font-size: 16px;
+
+    border: none;
+    border-radius: 6px;
+
+    background-color: #2563eb;
+    color: white;
+
+    cursor: pointer;
+}
+
+/* Change button when mouse is over it */
+button:hover {
+    background-color: #1d4ed8;
+}
