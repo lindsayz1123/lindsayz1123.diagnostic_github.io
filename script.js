@@ -11,9 +11,12 @@ const resultsScreen = document.getElementById("resultsScreen");
 
 const unitName = document.getElementById("unitName");
 const difficultyText = document.getElementById("difficulty");
-const questionText = document.getElementById("questionText");
+
+const questionArea = document.getElementById("questionText");
+
 const answerChoices = document.getElementById("answerChoices");
 const submitButton = document.getElementById("submitButton");
+
 const masteryResultsContainer =
     document.getElementById("masteryResults");
 
@@ -42,6 +45,8 @@ let selectedAnswer = null;
 let currentQuestion = null;
 
 let masteryResults = {};
+let diagnosticData = {};
+let studentProfile = {};
 
 
 // -------------------------
@@ -66,7 +71,10 @@ continueButton.addEventListener("click", function () {
     currentUnitIndex = 0;
     currentDifficulty = "easy";
     selectedAnswer = null;
+
     masteryResults = {};
+    diagnosticData = {};
+    studentProfile = {};
 
     // Change screens
     startScreen.classList.add("hidden");
@@ -85,20 +93,20 @@ function showQuestion() {
 
     // Finished all units
     if (currentUnitIndex >= units.length) {
+        createStudentProfile();
         showResults();
         return;
     }
 
     const currentUnit = units[currentUnitIndex];
 
-    // Find question for current unit + difficulty
+    // Find the correct question
     currentQuestion = questionBank.find(function (q) {
 
         return (
             q.unit === currentUnit &&
             q.difficulty === currentDifficulty
         );
-
     });
 
 
@@ -119,7 +127,10 @@ function showQuestion() {
     selectedAnswer = null;
 
 
-    // Show unit
+    // -------------------------
+    // UNIT INFORMATION
+    // -------------------------
+
     unitName.textContent =
         "Unit " +
         (currentUnitIndex + 1) +
@@ -129,21 +140,70 @@ function showQuestion() {
         currentUnit;
 
 
-    // Show difficulty
     difficultyText.textContent =
         "Difficulty: " + currentDifficulty;
 
 
-    // Show question
-    questionText.textContent =
-        currentQuestion.question;
+    // -------------------------
+    // QUESTION + CODE
+    // -------------------------
+
+    questionArea.innerHTML = "";
+
+    const questionParts =
+        currentQuestion.question.split("\n\n");
 
 
-    // Clear old answers
+    // First part is the question
+    const questionHeading =
+        document.createElement("h2");
+
+    questionHeading.className =
+        "question-text";
+
+    questionHeading.textContent =
+        questionParts[0];
+
+    questionArea.appendChild(
+        questionHeading
+    );
+
+
+    // Everything after the first blank line
+    // is displayed as code
+    if (questionParts.length > 1) {
+
+        const codeBlock =
+            document.createElement("pre");
+
+        codeBlock.className =
+            "code-block";
+
+
+        const code =
+            document.createElement("code");
+
+        code.textContent =
+            questionParts
+                .slice(1)
+                .join("\n\n");
+
+
+        codeBlock.appendChild(code);
+
+        questionArea.appendChild(
+            codeBlock
+        );
+    }
+
+
+    // -------------------------
+    // ANSWER CHOICES
+    // -------------------------
+
     answerChoices.innerHTML = "";
 
 
-    // Create answer buttons
     currentQuestion.choices.forEach(
         function (choice, index) {
 
@@ -152,15 +212,15 @@ function showQuestion() {
 
             button.textContent = choice;
 
-            button.className = "answer-button";
+            button.className =
+                "answer-button";
 
 
-            // Select answer
             button.addEventListener(
                 "click",
                 function () {
 
-                    // Remove selected style
+                    // Remove old selection
                     const allButtons =
                         document.querySelectorAll(
                             ".answer-button"
@@ -168,6 +228,7 @@ function showQuestion() {
 
                     allButtons.forEach(
                         function (btn) {
+
                             btn.classList.remove(
                                 "selected"
                             );
@@ -175,15 +236,19 @@ function showQuestion() {
                     );
 
 
-                    // Select this button
-                    button.classList.add("selected");
+                    // Select this answer
+                    button.classList.add(
+                        "selected"
+                    );
 
                     selectedAnswer = index;
                 }
             );
 
 
-            answerChoices.appendChild(button);
+            answerChoices.appendChild(
+                button
+            );
         }
     );
 }
@@ -204,6 +269,7 @@ submitButton.addEventListener(
             return;
         }
 
+
         checkAnswer(
             selectedAnswer,
             currentQuestion
@@ -219,10 +285,65 @@ submitButton.addEventListener(
 function checkAnswer(selectedAnswer, question) {
 
     const isCorrect =
-        selectedAnswer === question.correctAnswer;
+        selectedAnswer ===
+        question.correctAnswer;
+
 
     const currentUnit =
         units[currentUnitIndex];
+
+
+    // -------------------------
+    // CREATE DATA FOR UNIT
+    // -------------------------
+
+    if (!diagnosticData[currentUnit]) {
+
+        diagnosticData[currentUnit] = {
+
+            questionsAttempted: 0,
+
+            highestDifficultyReached:
+                "easy",
+
+            answers: [],
+
+            mastery: 0
+        };
+    }
+
+
+    // Record attempt
+    diagnosticData[currentUnit]
+        .questionsAttempted++;
+
+
+    diagnosticData[currentUnit]
+        .highestDifficultyReached =
+        currentDifficulty;
+
+
+    diagnosticData[currentUnit]
+        .answers.push({
+
+            questionId:
+                question.id,
+
+            concept:
+                question.concept,
+
+            difficulty:
+                currentDifficulty,
+
+            selectedAnswer:
+                selectedAnswer,
+
+            correctAnswer:
+                question.correctAnswer,
+
+            correct:
+                isCorrect
+        });
 
 
     // -------------------------
@@ -231,18 +352,16 @@ function checkAnswer(selectedAnswer, question) {
 
     if (currentDifficulty === "easy") {
 
-        // Failed easy
         if (!isCorrect) {
 
             masteryResults[currentUnit] = 25;
 
-            moveToNextUnit();
+            finishUnit(currentUnit);
 
             return;
         }
 
 
-        // Passed easy
         currentDifficulty = "medium";
 
         showQuestion();
@@ -257,18 +376,16 @@ function checkAnswer(selectedAnswer, question) {
 
     if (currentDifficulty === "medium") {
 
-        // Failed medium
         if (!isCorrect) {
 
             masteryResults[currentUnit] = 50;
 
-            moveToNextUnit();
+            finishUnit(currentUnit);
 
             return;
         }
 
 
-        // Passed medium
         currentDifficulty = "difficult";
 
         showQuestion();
@@ -283,23 +400,31 @@ function checkAnswer(selectedAnswer, question) {
 
     if (currentDifficulty === "difficult") {
 
-        // Passed difficult
         if (isCorrect) {
 
             masteryResults[currentUnit] = 100;
 
-        }
-
-        // Failed difficult
-        else {
+        } else {
 
             masteryResults[currentUnit] = 75;
-
         }
 
 
-        moveToNextUnit();
+        finishUnit(currentUnit);
     }
+}
+
+
+// -------------------------
+// FINISH UNIT
+// -------------------------
+
+function finishUnit(unit) {
+
+    diagnosticData[unit].mastery =
+        masteryResults[unit];
+
+    moveToNextUnit();
 }
 
 
@@ -320,6 +445,81 @@ function moveToNextUnit() {
 
 
 // -------------------------
+// COURSE ACTION
+// -------------------------
+
+function getCourseAction(mastery) {
+
+    if (mastery === 100) {
+        return "Skip";
+    }
+
+    if (mastery === 75) {
+        return "Brief Review";
+    }
+
+    if (mastery === 50) {
+        return "Teach";
+    }
+
+    return "Teach from Fundamentals";
+}
+
+
+// -------------------------
+// CREATE STUDENT PROFILE
+// -------------------------
+
+function createStudentProfile() {
+
+    studentProfile = {
+
+        subject: "Java",
+
+        diagnosticCompleted: true,
+
+        units: []
+    };
+
+
+    units.forEach(function (unit) {
+
+        const data =
+            diagnosticData[unit];
+
+
+        studentProfile.units.push({
+
+            unit: unit,
+
+            mastery:
+                data.mastery,
+
+            questionsAttempted:
+                data.questionsAttempted,
+
+            highestDifficultyReached:
+                data.highestDifficultyReached,
+
+            courseAction:
+                getCourseAction(
+                    data.mastery
+                ),
+
+            answers:
+                data.answers
+        });
+    });
+
+
+    console.log(
+        "Student Profile:",
+        studentProfile
+    );
+}
+
+
+// -------------------------
 // SHOW FINAL RESULTS
 // -------------------------
 
@@ -327,84 +527,100 @@ function showResults() {
 
     quizScreen.classList.add("hidden");
 
-    resultsScreen.classList.remove("hidden");
+    resultsScreen.classList.remove(
+        "hidden"
+    );
 
 
-    // Clear previous results
     masteryResultsContainer.innerHTML = "";
 
 
-    // Display each unit
-    units.forEach(function (unit) {
+    studentProfile.units.forEach(
+        function (result) {
 
-        const mastery =
-            masteryResults[unit];
+            // Result box
+            const resultBox =
+                document.createElement("div");
 
-
-        // Result container
-        const resultBox =
-            document.createElement("div");
-
-        resultBox.className = "result-box";
+            resultBox.className =
+                "result-box";
 
 
-        // Unit name
-        const resultUnitName =
-            document.createElement("h3");
+            // Unit
+            const resultUnitName =
+                document.createElement("h3");
 
-        resultUnitName.textContent = unit;
+            resultUnitName.textContent =
+                result.unit;
 
-        resultBox.appendChild(
-            resultUnitName
-        );
-
-
-        // Mastery percentage
-        const masteryText =
-            document.createElement("p");
-
-        masteryText.textContent =
-            mastery + "% Mastery";
-
-        resultBox.appendChild(
-            masteryText
-        );
+            resultBox.appendChild(
+                resultUnitName
+            );
 
 
-        // Mastery bar
-        const masteryBar =
-            document.createElement("div");
+            // Mastery
+            const masteryText =
+                document.createElement("p");
 
-        masteryBar.className =
-            "mastery-bar";
+            masteryText.textContent =
+                result.mastery +
+                "% Mastery";
 
-
-        const masteryFill =
-            document.createElement("div");
-
-        masteryFill.className =
-            "mastery-fill";
-
-        masteryFill.style.width =
-            mastery + "%";
+            resultBox.appendChild(
+                masteryText
+            );
 
 
-        masteryBar.appendChild(
-            masteryFill
-        );
+            // Course recommendation
+            const actionText =
+                document.createElement("p");
 
-        resultBox.appendChild(
-            masteryBar
-        );
+            actionText.className =
+                "course-action";
 
-        masteryResultsContainer.appendChild(
-            resultBox
-        );
-    });
+            actionText.textContent =
+                "Learning Path: " +
+                result.courseAction;
+
+            resultBox.appendChild(
+                actionText
+            );
 
 
-    // This is the data that can later
-    // be sent to the AI course generator
+            // Mastery bar
+            const masteryBar =
+                document.createElement("div");
+
+            masteryBar.className =
+                "mastery-bar";
+
+
+            const masteryFill =
+                document.createElement("div");
+
+            masteryFill.className =
+                "mastery-fill";
+
+            masteryFill.style.width =
+                result.mastery + "%";
+
+
+            masteryBar.appendChild(
+                masteryFill
+            );
+
+            resultBox.appendChild(
+                masteryBar
+            );
+
+
+            masteryResultsContainer.appendChild(
+                resultBox
+            );
+        }
+    );
+
+
     console.log(
         "Mastery Results:",
         masteryResults
