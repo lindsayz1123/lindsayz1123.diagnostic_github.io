@@ -86,3 +86,68 @@ button:hover {
 .answer-button:hover {
     background-color: #e2e8f0;
 }
+
+/* Answer choices */
+
+.answer-button {
+    display: block;
+
+    width: 100%;
+
+    margin: 10px 0;
+    padding: 12px;
+
+    background-color: #f1f5f9;
+    color: black;
+
+    border: 1px solid #ccc;
+    border-radius: 6px;
+
+    cursor: pointer;
+}
+
+.answer-button:hover {
+    background-color: #e2e8f0;
+}
+
+
+/* Results */
+
+.result-box {
+    text-align: left;
+
+    margin: 25px 0;
+}
+
+.result-box h3 {
+    margin-bottom: 5px;
+}
+
+.result-box p {
+    margin-top: 0;
+}
+
+
+/* Empty mastery bar */
+
+.mastery-bar {
+    width: 100%;
+    height: 12px;
+
+    background-color: #e5e7eb;
+
+    border-radius: 6px;
+
+    overflow: hidden;
+}
+
+
+/* Filled portion of mastery bar */
+
+.mastery-fill {
+    height: 100%;
+
+    background-color: #2563eb;
+
+    border-radius: 6px;
+}
